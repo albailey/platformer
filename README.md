@@ -1,9 +1,14 @@
 # platformer
 The foundation for a NES platformer written in CC65
 
-Current status:  worthless.
+Current status:  
+
+   worthless.
 
 The code compiles and does nothing.    Some rudamentary controls and graphics are coming shortly.
+
+The code uses  Shiru's  cc65 libraries which are included (for now)
+
 
 There is a Makefile.   
 
