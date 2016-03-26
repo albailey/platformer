@@ -1,32 +1,27 @@
 ; Startup code for cc65 and Shiru's NES library
 ; based on code by Groepaz/Hitmen <groepaz@gmx.net>, Ullrich von Bassewitz <uz@cc65.org>
 
+; Modified to try to use include files for modularization
+; TO DO:  The Makefile should be updated to include settings in its search path for ASM headers
 
-NES_MAPPER				=0	;mapper number
-NES_PRG_BANKS			=1	;number of 16K PRG banks, change to 2 for NROM256
-NES_CHR_BANKS			=1	;number of 8K CHR banks
-NES_MIRRORING			=0	;0 horizontal, 1 vertical, 8 four screen
-
-FT_DPCM_OFF				=$ff00	;samples offset, $c000 or higher, 64-byte steps
-FT_SFX_STREAMS			=4	;number of sound effects played at once, can be 4 or less (faster)
-
-.define FT_DPCM_ENABLE 	0	;zero to exclude all the DMC code
-.define FT_SFX_ENABLE  	1	;zero to exclude all the sound effects code
-
-.define SPEED_FIX		1	;zero if you want to handle PAL/NTSC speed difference by yourself
+.include "../settings/header.i"
+.include "../settings/settings.i"
 
 
-    .export _exit,__STARTUP__:absolute=1
-	.import initlib,push0,popa,popax,_main,zerobss,copydata
+.export _exit,__STARTUP__:absolute=1
+.import initlib,push0,popa,popax,_main,zerobss,copydata
 
 ; Linker generated symbols
-	.import __RAM_START__   ,__RAM_SIZE__
-	.import __ROM0_START__  ,__ROM0_SIZE__
-	.import __STARTUP_LOAD__,__STARTUP_RUN__,__STARTUP_SIZE__
-	.import	__CODE_LOAD__   ,__CODE_RUN__   ,__CODE_SIZE__
-	.import	__RODATA_LOAD__ ,__RODATA_RUN__ ,__RODATA_SIZE__
 
-    .include "zeropage.inc"
+.import __RAM_START__   ,__RAM_SIZE__
+.import __ROM0_START__  ,__ROM0_SIZE__
+.import __STARTUP_LOAD__,__STARTUP_RUN__,__STARTUP_SIZE__
+.import	__CODE_LOAD__   ,__CODE_RUN__   ,__CODE_SIZE__
+.import	__RODATA_LOAD__ ,__RODATA_RUN__ ,__RODATA_SIZE__
+
+.include "zeropage.inc"
+
+
 
 
 PPU_CTRL	=$2000
@@ -83,9 +78,6 @@ RLE_BYTE	=TEMP+3
 
 FT_BASE_ADR		=$0100	;page in RAM, should be $xx00
 FT_DPCM_PTR		=(FT_DPCM_OFF&$3fff)>>6
-
-.define FT_THREAD      1;undefine if you call sound effects in the same thread as sound update
-
 
 
 .segment "HEADER"
