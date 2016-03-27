@@ -9,8 +9,6 @@
 #define PLAYER_WIDTH 14
 #define PLAYER_HEIGHT 14
 
-#define PLAYER_SPEED 1
-
 #define PLAYER_SPRITE 0x40
 
 // TO DO:

@@ -14,10 +14,24 @@ const unsigned char palSprites[16]={
 	0x0f,0x19,0x29,0x39
 };
 
-// VARS
+// ============== VARIABLES ==================
+// JOYPAD Variables
 static unsigned char lastPad, pad;
-// TO DO: add support for fractional movement of player
-static unsigned char player_x, player_y;
+
+// PLAYER movement variables.  
+//    Note: these will be moved to a structure
+
+// player variables are int (16 bit)
+// velocity is 8 bit
+static int player_x;
+static int player_y;
+// velocity can be positive or negative depending on direction
+static signed char velocity_x;
+static signed char velocity_y;
+
+// Drop the bottom 4 bits and cast to 8 bit to support fractional movement
+#define POS(x)      ((x >> 4) & 0xFF)
+
 
 // PLAYER related controls and display
 // updatePlayer takes a current sprite index, adds sprites to the update, and returns the new index
@@ -26,25 +40,64 @@ static unsigned char player_x, player_y;
 // TO DO: add support for different player states
 unsigned char updatePlayer(unsigned char in_spr) {
    unsigned char spr = in_spr;
-   spr=oam_spr(player_x  , player_y,   PLAYER_SPRITE, PLAYER_ATTRIB, spr);
+   spr=oam_spr(POS(player_x),
+               POS(player_y),
+               PLAYER_SPRITE,
+               PLAYER_ATTRIB,
+               spr);
    return spr;
 }
 
 void handleInput(){
+  // apply friction to previous velocity
+  // apply acceleration to current velocity
+  // clamp velocity between 0 and max speed
 if (pad & PAD_LEFT) {
-  player_x -= PLAYER_SPEED;
-}
-if (pad & PAD_RIGHT) {
-  player_x += PLAYER_SPEED;
-}
-if (pad & PAD_UP) {
-  player_y -= PLAYER_SPEED;
-}
-if (pad & PAD_DOWN) {
-  player_y += PLAYER_SPEED;
+  // if previously moving right, subtract FRICTION (clamp value 0)
+  if (velocity_x > 0) {
+    velocity_x -= FRICTION;
+    if (velocity_x < 0){
+        velocity_x = 0;
+    }
+  }
+  velocity_x -= ACCELERATION;
+  if (velocity_x < MIN_VELOCITY) {
+     velocity_x = MIN_VELOCITY;
+  }
+} else if (pad & PAD_RIGHT) {
+  // if previously moving left, add FRICTION (clamp value 0)
+  if (velocity_x < 0) {
+    velocity_x += FRICTION;
+    if (velocity_x > 0) {
+      velocity_x = 0;
+    }
+  }
+  velocity_x += ACCELERATION;
+  if (velocity_x > MAX_VELOCITY) {
+     velocity_x = MAX_VELOCITY;
+  }
+} else { 
+  // neither left or right.
+  if (velocity_x > FRICTION) {
+     velocity_x -= FRICTION;
+  } else if(velocity_x < -FRICTION) {
+     velocity_x += FRICTION;
+  } else {
+    velocity_x = 0;
+  }
 }
 
+if (pad & PAD_UP) {
+  velocity_y = -ACCELERATION;
+} else if (pad & PAD_DOWN) {
+  velocity_y = ACCELERATION;
+} else {
+ velocity_y = 0;
 }
+  player_x += velocity_x;
+  player_y += velocity_y;
+}
+
 
 // This is a minimal game engine that does hardly anything (yet)
 // TO DO: add support for multiple players
@@ -67,9 +120,14 @@ void main(void)
         pal_bg(palSprites);
 
         // NEED:  level loading, game states, etc..
-        // FOR NOW:  using a sample level
-        player_x = 100;
-        player_y = 100;
+
+        // place player in middle of the screen
+        player_x = 160 << 4;
+        player_y = 120 << 4;
+        // not moving
+        velocity_x = 0;
+        velocity_y = 0;
+
 	while(1)
 	{
                 // -- game loop --
