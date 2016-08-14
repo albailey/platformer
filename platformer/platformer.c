@@ -3,38 +3,19 @@
 #include "include/settings.h"
 #include "include/utils.h"
 
+#include "include/movement.h"
 
-// ===== CONST DATA ==================
-//palette for sprites
-// TO DO: move this to a settings or example file
-const unsigned char palSprites[16]={
-	0x0f,0x17,0x27,0x37,
-	0x0f,0x11,0x21,0x31,
-	0x0f,0x15,0x25,0x35,
-	0x0f,0x19,0x29,0x39
-};
+#include "include/player1.h"
+// TO DO: add support for player2
 
-// ============== VARIABLES ==================
-// JOYPAD Variables
-static unsigned char lastPad, pad;
-
-// PLAYER movement variables.  
-//    Note: these will be moved to a structure
-
-// player variables are int (16 bit)
-// velocity is 8 bit
-static int player_x;
-static int player_y;
-// velocity can be positive or negative depending on direction
-static signed char velocity_x;
-static signed char velocity_y;
-
-// Drop the bottom 4 bits and cast to 8 bit to support fractional movement
-#define POS(x)      ((x >> 4) & 0xFF)
+#include "include/graphics.h"
 
 
 // PLAYER related controls and display
-// updatePlayer takes a current sprite index, adds sprites to the update, and returns the new index
+// updatePlayer
+//  - takes a current sprite index
+//  - adds sprites to the update
+//  - and returns the new index
 // TO DO:  add support for direction
 // TO DO: add support for animation sequences
 // TO DO: add support for different player states
@@ -145,4 +126,5 @@ void main(void)
 		showLine();
 	}
 }
+
 

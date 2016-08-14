@@ -232,6 +232,7 @@ sounds_data:
    	.word irq	;$fffe irq / brk
 
 
-.segment "CHARS"
-
-	.incbin "tileset.chr"
+.segment "CHAR0"
+        .include "bg_tiles.h"
+.segment "CHAR1"
+        .include "sprite_tiles.h"

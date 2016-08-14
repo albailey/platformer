@@ -1,14 +1,21 @@
 // These are the C code settings for the platformer
 
-#include "../examples/example1.h"
+#include "../examples/clean_room_example.h"
 
-// Uncomment the following line to see a horizontal line on the screen to indicate CPU cycles remaining per frame
+// DEV_MODE shows a horizontal line on the screen to indicate CPU cycles remaining per frame
 #define DEV_MODE 1
 
 // Fixed point math (assuming the bottom 4 bits are the decimal)
 // 16              = 00010000 ==  1.0
 // 16 + 8          = 00011000 =>  1.5
 // 16 + 8 + 4 + 2  = 00011110 ~=> 1.9
+
+
+//-------------
+// DEFAULTS
+//-------------
+//   If these have already been set in the included header, these defaults are ignored
+
 // Use Friction 1.9 (30)
 #ifndef FRICTION
 #define FRICTION 30
@@ -27,11 +34,4 @@
 #ifndef MIN_VELOCITY
 #define MIN_VELOCITY -104
 #endif
-
-
-
-
-
-
-
 

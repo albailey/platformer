@@ -1,5 +1,6 @@
 CC=cc65
 CFLAGS=-Oi
+EMU=fceux
 
 GAME=platformer
 
@@ -23,4 +24,4 @@ build: $(GAME).c
 	ld65 -o $(GAME).nes -C nes.cfg $(objfiles) libs/runtime.lib
 
 run:
-	fceux $(GAME).nes
+	$(EMU) $(GAME).nes
